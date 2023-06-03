@@ -50,6 +50,7 @@ public class UserController {
                 return true;
             } else return true;
     }
+    
     @PostMapping
     public void create(@RequestBody User user) throws ValidationException {
         try {
