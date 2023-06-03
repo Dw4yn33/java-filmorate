@@ -97,7 +97,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void CheckingForMakingNameFromLogin() {
+    public void checkingForMakingNameFromLogin() {
         User user = new User(1,"anatoliy@mail.ru","abobus228","",
                 LocalDate.of(2022,11,11));
         UserController.checkForUserValidation(user);
