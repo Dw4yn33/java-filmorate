@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserControllerTest {
 
     @Test
-    public void checkingForEmptyEmail(){
+    public void checkingForEmptyEmail() {
         User user = new User(1,"","abobus228","Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
@@ -27,7 +27,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void checkingForSpaceBarsInEmail(){
+    public void checkingForSpaceBarsInEmail() {
         User user = new User(1,"anatoliy @mail.ru","abobus228","Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
@@ -41,7 +41,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void checkingForSpecialSymbolInEmail(){
+    public void checkingForSpecialSymbolInEmail() {
         User user = new User(1,"bombavdomemail.ru","abobus228","Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
@@ -55,7 +55,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void checkingForEmptyLogin(){
+    public void checkingForEmptyLogin() {
         User user = new User(1,"anatoliy@mail.ru","","Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
@@ -69,7 +69,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void checkingForSpaceBarsInLogin(){
+    public void checkingForSpaceBarsInLogin() {
         User user = new User(1,"anatoliy@mail.ru","abobus 228","Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
@@ -83,7 +83,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void checkingForCorrectBirthDate(){
+    public void checkingForCorrectBirthDate() {
         User user = new User(1,"anatoliy@mail.ru","abobus228","Anatoliy",
                 LocalDate.of(2023,11,11));
         ValidationException test = assertThrows(ValidationException.class,

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmControllerTest {
 
     @Test
-    public void checkingForEmptyName(){
+    public void checkingForEmptyName() {
         Film film = new Film(1," ","norm",
                 LocalDate.of(2012,4,25),120);
         ValidationException test = assertThrows(ValidationException.class,
@@ -26,7 +26,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void checkingForMoreThan200SymbolsInDescription(){
+    public void checkingForMoreThan200SymbolsInDescription() {
         Film film = new Film(1,"Avengers","Lorem ipsum dolor sit amet, consectetueradipiscingelit," +
                 " sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpatUt wisi enimad" +
                 " minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquipex ea commodo" +
@@ -43,7 +43,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void checkingForTheOldestFilm(){
+    public void checkingForTheOldestFilm() {
         Film film = new Film(1,"chicken","norm",
                 LocalDate.of(1853,4,25),120);
         ValidationException test = assertThrows(ValidationException.class,
