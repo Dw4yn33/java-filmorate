@@ -25,7 +25,7 @@ public class UserController {
                 String message = "Ошибка: введенная почта пуста";
                 log.info(message);
                 throw new ValidationException(message);
-            } else if (user.getEmail().contains(" ")){
+            } else if (user.getEmail().contains(" ")) {
                 String message = "Ошибка: в введенной почте присутствуют пробелы";
                 log.info(message);
                 throw new ValidationException(message);
@@ -37,7 +37,7 @@ public class UserController {
                 String message = "Ошибка: пустой логин";
                 log.info(message);
                 throw new ValidationException(message);
-            } else if (user.getLogin().contains(" ")){
+            } else if (user.getLogin().contains(" ")) {
                 String message = "Ошибка: в логине присутствуют пробелы";
                 log.info(message);
                 throw new ValidationException(message);
@@ -54,13 +54,13 @@ public class UserController {
     public void create(@RequestBody User user) throws ValidationException {
         try {
             if (checkForUserValidation(user)) {
-                if (users.containsKey(user.getId())){
+                if (users.containsKey(user.getId())) {
                     String message = "Ошибка: попытка регистрации нового пользователя под чужим иденитфикатором";
                     log.info(message);
                     throw new ValidationException(message);
                 } else {
                     users.put(user.getId(),user);
-                    log.info("Пользователь "+user.getName()+ " (идентификатор: "+user.getId()+
+                    log.info("Пользователь " + user.getName() + " (идентификатор: " + user.getId() +
                             ") был успешно зарегистрирован");
                 }
             }
@@ -74,7 +74,7 @@ public class UserController {
         try {
             if (checkForUserValidation(user)) {
                 users.put(user.getId(), user);
-                log.info("Информация о пользователе с идентификатором "+user.getId()+" была успешно обновлена");
+                log.info("Информация о пользователе с идентификатором " + user.getId() + " была успешно обновлена");
             }
         } catch (ValidationException e) {
             return;

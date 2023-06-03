@@ -20,7 +20,7 @@ public class FilmController {
     private static final int DESCRIPTIONMAXLENGTH = 200;
 
     public static boolean checkForFilmValidation(Film film) {
-            if (film.getName().isEmpty() || film.getName().isBlank()){
+            if (film.getName().isEmpty() || film.getName().isBlank()) {
                 String message = "Ошибка: введено пустое название фильма";
                 log.info(message);
                 throw new ValidationException(message);
@@ -28,7 +28,7 @@ public class FilmController {
                 String message = "Ошибка: превышена максимально допустимая длина описания фильма";
                 log.info(message);
                 throw new ValidationException(message);
-            } else if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,25))){
+            } else if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,25))) {
                 String message = "Ошибка: слишком старый фильм";
                 log.info(message);
                 throw new ValidationException(message);
@@ -43,13 +43,13 @@ public class FilmController {
     public void create(@RequestBody Film film) throws ValidationException {
         try {
             if (checkForFilmValidation(film)) {
-                if (films.containsKey(film.getId())){
+                if (films.containsKey(film.getId())) {
                     String message = "Ошибка: попытка регистрации нового фильма под чужим идентификатором";
                     log.info(message);
                     throw new ValidationException(message);
                 } else {
                     films.put(film.getId(),film);
-                    log.info("Фильм "+film.getName()+ " (идентификатор: "+film.getId()+") был успешно добавлен");
+                    log.info("Фильм " + film.getName() + " (идентификатор: " + film.getId() + ") был успешно добавлен");
                 }
             }
         } catch (ValidationException e) {
@@ -62,7 +62,7 @@ public class FilmController {
         try {
             if (checkForFilmValidation(film)) {
                 films.put(film.getId(),film);
-                log.info("Информация о фильме с идентификатором "+film.getId()+" была успешно обновлена");
+                log.info("Информация о фильме с идентификатором " + film.getId() + " была успешно обновлена");
             }
         } catch (ValidationException e) {
             return;
