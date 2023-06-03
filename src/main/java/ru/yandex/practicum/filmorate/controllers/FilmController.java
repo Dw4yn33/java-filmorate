@@ -1,11 +1,10 @@
-package ru.yandex.practicum.controllers;
+package ru.yandex.practicum.filmorate.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.exceptions.ValidationException;
-import ru.yandex.practicum.model.Film;
-import ru.yandex.practicum.model.User;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -42,18 +41,32 @@ public class FilmController {
 
     @PostMapping
     public void create(@RequestBody Film film) throws ValidationException {
-        if (checkForFilmValidation(film)) {
-            if (films.containsKey(film.getId())){
-                String message = "Ошибка: попытка регистрации нового фильма под чужим идентификатором";
-                log.info(message);
-                throw new ValidationException(message);
-            } else films.put(film.getId(),film);
+        try {
+            if (checkForFilmValidation(film)) {
+                if (films.containsKey(film.getId())){
+                    String message = "Ошибка: попытка регистрации нового фильма под чужим идентификатором";
+                    log.info(message);
+                    throw new ValidationException(message);
+                } else {
+                    films.put(film.getId(),film);
+                    log.info("Фильм "+film.getName()+ " (идентификатор: "+film.getId()+") был успешно добавлен");
+                }
+            }
+        } catch (ValidationException e) {
+            return;
         }
     }
 
     @PutMapping
     public void update(@RequestBody Film film) {
-        if (checkForFilmValidation(film)) films.put(film.getId(),film);
+        try {
+            if (checkForFilmValidation(film)) {
+                films.put(film.getId(),film);
+                log.info("Информация о фильме с идентификатором "+film.getId()+" была успешно обновлена");
+            }
+        } catch (ValidationException e) {
+            return;
+        }
     }
 
     @GetMapping

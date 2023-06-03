@@ -1,10 +1,10 @@
-package ru.yandex.practicum.controllers;
+package ru.yandex.practicum.filmorate.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.model.User;
-import ru.yandex.practicum.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -52,20 +52,33 @@ public class UserController {
     }
     @PostMapping
     public void create(@RequestBody User user) throws ValidationException {
-        if (checkForUserValidation(user)) {
-            if (users.containsKey(user.getId())){
-                String message = "Ошибка: попытка регистрации нового пользователя под чужим иденитфикатором";
-                log.info(message);
-                throw new ValidationException(message);
-            } else {
-                users.put(user.getId(),user);
+        try {
+            if (checkForUserValidation(user)) {
+                if (users.containsKey(user.getId())){
+                    String message = "Ошибка: попытка регистрации нового пользователя под чужим иденитфикатором";
+                    log.info(message);
+                    throw new ValidationException(message);
+                } else {
+                    users.put(user.getId(),user);
+                    log.info("Пользователь "+user.getName()+ " (идентификатор: "+user.getId()+
+                            ") был успешно зарегистрирован");
+                }
             }
+        } catch (ValidationException e) {
+            return;
         }
     }
 
     @PutMapping
     public void update(@RequestBody User user) {
-        if (checkForUserValidation(user)) users.put(user.getId(), user);
+        try {
+            if (checkForUserValidation(user)) {
+                users.put(user.getId(), user);
+                log.info("Информация о пользователе с идентификатором "+user.getId()+" была успешно обновлена");
+            }
+        } catch (ValidationException e) {
+            return;
+        }
     }
 
     @GetMapping
