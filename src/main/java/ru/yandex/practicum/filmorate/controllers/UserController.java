@@ -21,36 +21,36 @@ public class UserController {
 
 
     public static boolean checkForUserValidation(User user) {
-            if (user.getEmail().isEmpty()) {
-                String message = "Ошибка: введенная почта пуста";
-                log.info(message);
-                throw new ValidationException(message);
-            } else if (user.getEmail().contains(" ")) {
-                String message = "Ошибка: в введенной почте присутствуют пробелы";
-                log.info(message);
-                throw new ValidationException(message);
-            } else if (!user.getEmail().contains("@")) {
-                String message = "Ошибка: то, что вы ввели - не почта";
-                log.info(message);
-                throw new ValidationException(message);
-            } else if (user.getLogin().isEmpty()) {
-                String message = "Ошибка: пустой логин";
-                log.info(message);
-                throw new ValidationException(message);
-            } else if (user.getLogin().contains(" ")) {
-                String message = "Ошибка: в логине присутствуют пробелы";
-                log.info(message);
-                throw new ValidationException(message);
-            } else if (user.getBirthday().isAfter(LocalDate.now())) {
-                String message = "Ошибка: пользователь не может быть из будущего";
-                log.info(message);
-                throw new ValidationException(message);
-            } else if (user.getName().isEmpty() || user.getName().isBlank()) {
-                user.setName(user.getLogin());
-                return true;
-            } else return true;
+        if (user.getEmail().isEmpty()) {
+            String message = "Ошибка: введенная почта пуста";
+            log.info(message);
+            throw new ValidationException(message);
+        } else if (user.getEmail().contains(" ")) {
+            String message = "Ошибка: в введенной почте присутствуют пробелы";
+            log.info(message);
+            throw new ValidationException(message);
+        } else if (!user.getEmail().contains("@")) {
+            String message = "Ошибка: то, что вы ввели - не почта";
+            log.info(message);
+            throw new ValidationException(message);
+        } else if (user.getLogin().isEmpty()) {
+            String message = "Ошибка: пустой логин";
+            log.info(message);
+            throw new ValidationException(message);
+        } else if (user.getLogin().contains(" ")) {
+            String message = "Ошибка: в логине присутствуют пробелы";
+            log.info(message);
+            throw new ValidationException(message);
+        } else if (user.getBirthday().isAfter(LocalDate.now())) {
+            String message = "Ошибка: пользователь не может быть из будущего";
+            log.info(message);
+            throw new ValidationException(message);
+        } else if (user.getName().isEmpty() || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            return true;
+        } else return true;
     }
-    
+
     @PostMapping
     public void create(@RequestBody User user) throws ValidationException {
         try {
