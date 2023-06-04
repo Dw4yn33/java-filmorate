@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
@@ -58,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void create(@RequestBody User user) throws ValidationException {
+    public void create(@Validated @RequestBody User user) throws ValidationException {
         if (checkForUserValidation(user)) {
             if (users.containsKey(user.getId())) {
                 String message = "Ошибка: попытка регистрации нового пользователя под чужим иденитфикатором";
@@ -73,7 +74,7 @@ public class UserController {
     }
 
     @PutMapping
-    public void update(@RequestBody User user) throws ValidationException {
+    public void update(@Validated @RequestBody User user) throws ValidationException {
         if (checkForUserValidation(user)) {
            if (users.containsKey(user.getId())) {
                users.put(user.getId(), user);

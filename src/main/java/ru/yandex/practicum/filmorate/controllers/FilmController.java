@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -46,7 +47,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public void create(@RequestBody Film film) throws ValidationException {
+    public void create(@Validated @RequestBody Film film) throws ValidationException {
         if (checkForFilmValidation(film)) {
             if (films.containsKey(film.getId())) {
                 String message = "Ошибка: попытка регистрации нового фильма под чужим идентификатором";
@@ -60,7 +61,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public void update(@RequestBody Film film) {
+    public void update(@Validated @RequestBody Film film) {
         if (checkForFilmValidation(film)) {
             if (films.containsKey(film.getId())) {
                 films.put(film.getId(),film);
