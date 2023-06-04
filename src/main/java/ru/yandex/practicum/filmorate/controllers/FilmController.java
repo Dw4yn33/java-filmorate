@@ -18,6 +18,7 @@ public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private static final int DESCRIPTIONMAXLENGTH = 200;
+    private static int generatorId;
 
     public static boolean checkForFilmValidation(Film film) {
             if (film.getName().isEmpty() || film.getName().isBlank()) {
@@ -36,7 +37,12 @@ public class FilmController {
                 String message = "Ошибка: продолжительность фильма не может быть отрицательной";
                 log.info(message);
                 throw new ValidationException(message);
-            } else return true;
+            }
+            if (film.getId() <= 0) {
+                film.setId(generatorId);
+                generatorId++;
+            }
+            return true;
     }
 
     @PostMapping

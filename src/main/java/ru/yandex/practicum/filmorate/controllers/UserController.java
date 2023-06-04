@@ -18,6 +18,7 @@ public class UserController {
 
     private final Map<Integer,User> users = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static int generatorId;
 
 
     public static boolean checkForUserValidation(User user) {
@@ -45,10 +46,15 @@ public class UserController {
             String message = "Ошибка: пользователь не может быть из будущего";
             log.info(message);
             throw new ValidationException(message);
-        } else if (user.getName().isEmpty() || user.getName().isBlank()) {
+        }
+        if (user.getId() <= 0) {
+            user.setId(generatorId);
+            generatorId++;
+        }
+        if (user.getName().isEmpty() || user.getName().isBlank()) {
             user.setName(user.getLogin());
-            return true;
-        } else return true;
+        }
+        return true;
     }
 
     @PostMapping
