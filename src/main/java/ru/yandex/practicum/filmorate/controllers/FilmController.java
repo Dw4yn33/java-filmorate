@@ -56,8 +56,11 @@ public class FilmController {
     @PutMapping
     public void update(@RequestBody Film film) {
         if (checkForFilmValidation(film)) {
-            films.put(film.getId(),film);
-            log.info("Информация о фильме с идентификатором " + film.getId() + " была успешно обновлена");
+            if (films.containsKey(film.getId())) {
+                films.put(film.getId(),film);
+                log.info("Информация о фильме с идентификатором " + film.getId() + " была успешно обновлена");
+            } else throw new ValidationException("Фильм с идентификатором" + film.getId() +
+                    "не добавлен" + ", нечего обновлять");
         }
     }
 

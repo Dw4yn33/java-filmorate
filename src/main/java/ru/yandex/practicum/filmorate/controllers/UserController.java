@@ -67,10 +67,13 @@ public class UserController {
     }
 
     @PutMapping
-    public void update(@RequestBody User user) {
+    public void update(@RequestBody User user) throws ValidationException {
         if (checkForUserValidation(user)) {
-           users.put(user.getId(), user);
-           log.info("Информация о пользователе с идентификатором " + user.getId() + " была успешно обновлена");
+           if (users.containsKey(user.getId())) {
+               users.put(user.getId(), user);
+               log.info("Информация о пользователе с идентификатором " + user.getId() + " была успешно обновлена");
+           } else throw new ValidationException("Пользователь с идентификатором" + user.getId() +
+                   "не зарегистрирован" + ", нечего обновлять");
         }
     }
 
