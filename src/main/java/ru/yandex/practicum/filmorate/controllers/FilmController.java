@@ -47,7 +47,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public void create(@Validated @RequestBody Film film) throws ValidationException {
+    public Film create(@Validated @RequestBody Film film) throws ValidationException {
         if (checkForFilmValidation(film)) {
             if (films.containsKey(film.getId())) {
                 String message = "Ошибка: попытка регистрации нового фильма под чужим идентификатором";
@@ -58,10 +58,11 @@ public class FilmController {
                 log.info("Фильм " + film.getName() + " (идентификатор: " + film.getId() + ") был успешно добавлен");
             }
         }
+        return film;
     }
 
     @PutMapping
-    public void update(@Validated @RequestBody Film film) {
+    public Film update(@Validated @RequestBody Film film) {
         if (checkForFilmValidation(film)) {
             if (films.containsKey(film.getId())) {
                 films.put(film.getId(),film);
@@ -69,6 +70,7 @@ public class FilmController {
             } else throw new ValidationException("Фильм с идентификатором " + film.getId() +
                     " не добавлен" + ", нечего обновлять");
         }
+        return film;
     }
 
     @GetMapping

@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void create(@Validated @RequestBody User user) throws ValidationException {
+    public User create(@Validated @RequestBody User user) throws ValidationException {
         if (checkForUserValidation(user)) {
             if (users.containsKey(user.getId())) {
                 String message = "Ошибка: попытка регистрации нового пользователя под чужим идентификатором";
@@ -71,10 +71,11 @@ public class UserController {
                         ") был успешно зарегистрирован");
             }
         }
+        return user;
     }
 
     @PutMapping
-    public void update(@Validated @RequestBody User user) throws ValidationException {
+    public User update(@Validated @RequestBody User user) throws ValidationException {
         if (checkForUserValidation(user)) {
            if (users.containsKey(user.getId())) {
                users.put(user.getId(), user);
@@ -82,6 +83,7 @@ public class UserController {
            } else throw new ValidationException("Пользователь с идентификатором" + user.getId() +
                    "не зарегистрирован" + ", нечего обновлять");
         }
+        return user;
     }
 
     @GetMapping
