@@ -14,7 +14,7 @@ class UserControllerTest {
 
     @Test
     public void checkingForEmptyEmail() {
-        User user = new User(1,"","abobus228","Anatoliy",
+        User user = new User("","abobus228",1,"Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
                 new Executable() {
@@ -28,7 +28,7 @@ class UserControllerTest {
 
     @Test
     public void checkingForSpaceBarsInEmail() {
-        User user = new User(1,"anatoliy @mail.ru","abobus228","Anatoliy",
+        User user = new User("anatoliy @mail.ru","abobus228",1,"Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
                 new Executable() {
@@ -42,7 +42,7 @@ class UserControllerTest {
 
     @Test
     public void checkingForSpecialSymbolInEmail() {
-        User user = new User(1,"bombavdomemail.ru","abobus228","Anatoliy",
+        User user = new User("bombavdomemail.ru","abobus228",1,"Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
                 new Executable() {
@@ -56,7 +56,7 @@ class UserControllerTest {
 
     @Test
     public void checkingForEmptyLogin() {
-        User user = new User(1,"anatoliy@mail.ru","","Anatoliy",
+        User user = new User("anatoliy@mail.ru","",1,"Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
                 new Executable() {
@@ -70,7 +70,7 @@ class UserControllerTest {
 
     @Test
     public void checkingForSpaceBarsInLogin() {
-        User user = new User(1,"anatoliy@mail.ru","abobus 228","Anatoliy",
+        User user = new User("anatoliy@mail.ru","abobus 228",1,"Anatoliy",
                 LocalDate.of(1999,11,11));
         ValidationException test = assertThrows(ValidationException.class,
                 new Executable() {
@@ -84,7 +84,7 @@ class UserControllerTest {
 
     @Test
     public void checkingForCorrectBirthDate() {
-        User user = new User(1,"anatoliy@mail.ru","abobus228","Anatoliy",
+        User user = new User("anatoliy@mail.ru","abobus228",1,"Anatoliy",
                 LocalDate.of(2023,11,11));
         ValidationException test = assertThrows(ValidationException.class,
                 new Executable() {
@@ -98,7 +98,7 @@ class UserControllerTest {
 
     @Test
     public void checkingForMakingNameFromLogin() {
-        User user = new User(1,"anatoliy@mail.ru","abobus228","",
+        User user = new User("anatoliy@mail.ru","abobus228",1,"",
                 LocalDate.of(2022,11,11));
         UserController.checkForUserValidation(user);
         assertEquals(user.getName(),user.getLogin());
