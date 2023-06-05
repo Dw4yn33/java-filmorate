@@ -19,7 +19,7 @@ public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private static final int DESCRIPTIONMAXLENGTH = 200;
-    private static int generatorId;
+    private static int generatorId = 1;
 
     public static boolean checkForFilmValidation(Film film) {
             if (film.getName().isEmpty() || film.getName().isBlank()) {
@@ -66,8 +66,8 @@ public class FilmController {
             if (films.containsKey(film.getId())) {
                 films.put(film.getId(),film);
                 log.info("Информация о фильме с идентификатором " + film.getId() + " была успешно обновлена");
-            } else throw new ValidationException("Фильм с идентификатором" + film.getId() +
-                    "не добавлен" + ", нечего обновлять");
+            } else throw new ValidationException("Фильм с идентификатором " + film.getId() +
+                    " не добавлен" + ", нечего обновлять");
         }
     }
 

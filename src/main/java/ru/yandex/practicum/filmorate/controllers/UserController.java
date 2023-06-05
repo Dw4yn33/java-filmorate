@@ -19,7 +19,7 @@ public class UserController {
 
     private final Map<Integer,User> users = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private static int generatorId;
+    private static int generatorId = 1;
 
 
     public static boolean checkForUserValidation(User user) {
@@ -52,7 +52,7 @@ public class UserController {
             user.setId(generatorId);
             generatorId++;
         }
-        if (user.getName().isEmpty() || user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
         return true;
@@ -62,7 +62,7 @@ public class UserController {
     public void create(@Validated @RequestBody User user) throws ValidationException {
         if (checkForUserValidation(user)) {
             if (users.containsKey(user.getId())) {
-                String message = "Ошибка: попытка регистрации нового пользователя под чужим иденитфикатором";
+                String message = "Ошибка: попытка регистрации нового пользователя под чужим идентификатором";
                 log.info(message);
                 throw new ValidationException(message);
             } else {
