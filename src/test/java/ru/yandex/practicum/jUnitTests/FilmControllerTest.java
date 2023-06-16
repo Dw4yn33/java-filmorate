@@ -19,6 +19,7 @@ class FilmControllerTest {
     public void createValidator() {
         storage = new InMemoryFilmStorage();
     }
+
     @Test
     public void checkingForEmptyName() {
         Film film = new Film(1," ","norm",

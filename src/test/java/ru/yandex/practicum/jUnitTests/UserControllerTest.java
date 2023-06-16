@@ -19,6 +19,7 @@ class UserControllerTest {
     public void createValidator() {
         storage = new InMemoryUserStorage();
     }
+
     @Test
     public void checkingForEmptyEmail() {
         User user = new User("abobus228","Anatoliy",1,"",
