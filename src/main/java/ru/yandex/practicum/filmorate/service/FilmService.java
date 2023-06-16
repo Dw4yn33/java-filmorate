@@ -36,10 +36,8 @@ public class FilmService {
         if (film != null) {
             if (user != null) {
                 film.addLike(user.getId());
-            }
-            else throw new UserNotFoundException("Несуществующий пользователь не может поставить лайк");
-        }
-        else throw new FilmNotFoundException("Фильм, которому пытаются поставить лайк, не найден");
+            } else throw new UserNotFoundException("Несуществующий пользователь не может поставить лайк");
+        } else throw new FilmNotFoundException("Фильм, которому пытаются поставить лайк, не найден");
     }
 
     public void removeLike(long filmId, long userId) {
@@ -48,10 +46,8 @@ public class FilmService {
         if (film != null) {
             if (user != null) {
                 film.removeLike(user.getId());
-            }
-            else throw new UserNotFoundException("Несуществующий пользователь не может удалить лайк");
-        }
-        else throw new FilmNotFoundException("Фильм, у которого пытаются удалить лайк, не найден");
+            } else throw new UserNotFoundException("Несуществующий пользователь не может удалить лайк");
+        } else throw new FilmNotFoundException("Фильм, у которого пытаются удалить лайк, не найден");
     }
 
     public List<Film> getPopular(Integer count) {
