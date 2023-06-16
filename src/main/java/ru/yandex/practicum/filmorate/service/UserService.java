@@ -89,7 +89,7 @@ public class UserService {
         if (user == null || friend == null) {
             throw new UserNotFoundException("Невозможно посмотреть список друзей несуществующего пользователя");
         }
-        Set<Long> sameFriends =new HashSet<>(user.getFriends());
+        Set<Long> sameFriends = new HashSet<>(user.getFriends());
         sameFriends.retainAll(friend.getFriends());
         List<Long> finalFriends = new ArrayList<>(sameFriends);
         List<User> friends = new ArrayList<>();
