@@ -11,6 +11,10 @@ public class FilmComparator implements Comparator<Film> {
             return -1;
         } else if (film1.getLikes().size() < film2.getLikes().size()) {
             return 1;
+        } else if (film1.getId() < film2.getId()) {
+            return -1;
+        } else if (film1.getId() > film2.getId()) {
+            return 1;
         } else return 0;
     }
 }
