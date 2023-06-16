@@ -72,7 +72,6 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
-
     public boolean checkForUserValidation(User user) {
         if (user.getEmail().isEmpty()) {
             throw new ValidationException("Ошибка: введенная почта пуста");
