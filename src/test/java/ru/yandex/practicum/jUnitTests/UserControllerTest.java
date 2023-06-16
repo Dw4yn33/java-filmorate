@@ -1,10 +1,12 @@
 package ru.yandex.practicum.jUnitTests;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.yandex.practicum.filmorate.controllers.UserController;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
@@ -12,6 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
 
+    InMemoryUserStorage storage;
+
+    @BeforeEach
+    public void createValidator() {
+        storage = new InMemoryUserStorage();
+    }
     @Test
     public void checkingForEmptyEmail() {
         User user = new User("abobus228","Anatoliy",1,"",
@@ -20,7 +28,7 @@ class UserControllerTest {
                 new Executable() {
                     @Override
                     public void execute() throws ValidationException {
-                        UserController.checkForUserValidation(user);
+                        storage.checkForUserValidation(user);
                     }
                 });
         assertEquals("Ошибка: введенная почта пуста",test.getMessage());
@@ -34,7 +42,7 @@ class UserControllerTest {
                 new Executable() {
                     @Override
                     public void execute() throws ValidationException {
-                        UserController.checkForUserValidation(user);
+                        storage.checkForUserValidation(user);
                     }
                 });
         assertEquals("Ошибка: в введенной почте присутствуют пробелы",test.getMessage());
@@ -48,7 +56,7 @@ class UserControllerTest {
                 new Executable() {
                     @Override
                     public void execute() throws ValidationException {
-                        UserController.checkForUserValidation(user);
+                        storage.checkForUserValidation(user);
                     }
                 });
         assertEquals("Ошибка: то, что вы ввели - не почта",test.getMessage());
@@ -62,7 +70,7 @@ class UserControllerTest {
                 new Executable() {
                     @Override
                     public void execute() throws ValidationException {
-                        UserController.checkForUserValidation(user);
+                        storage.checkForUserValidation(user);
                     }
                 });
         assertEquals("Ошибка: пустой логин",test.getMessage());
@@ -76,7 +84,7 @@ class UserControllerTest {
                 new Executable() {
                     @Override
                     public void execute() throws ValidationException {
-                        UserController.checkForUserValidation(user);
+                        storage.checkForUserValidation(user);
                     }
                 });
         assertEquals("Ошибка: в логине присутствуют пробелы",test.getMessage());
@@ -90,7 +98,7 @@ class UserControllerTest {
                 new Executable() {
                     @Override
                     public void execute() throws ValidationException {
-                        UserController.checkForUserValidation(user);
+                        storage.checkForUserValidation(user);
                     }
                 });
         assertEquals("Ошибка: пользователь не может быть из будущего",test.getMessage());
@@ -100,7 +108,7 @@ class UserControllerTest {
     public void checkingForMakingNameFromLogin() {
         User user = new User("abobus228","",1,"anatoliy@mail.ru",
                 LocalDate.of(2022,11,11));
-        UserController.checkForUserValidation(user);
+        storage.checkForUserValidation(user);
         assertEquals(user.getName(),user.getLogin());
     }
 }
