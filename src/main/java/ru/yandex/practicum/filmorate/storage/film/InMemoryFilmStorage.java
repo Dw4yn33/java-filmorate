@@ -23,7 +23,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-        if(checkForFilmValidation(film)) {
+        if (checkForFilmValidation(film)) {
             if (films.containsKey(film.getId())) {
                 throw new ValidationException("Ошибка: попытка регистрации нового фильма под чужим идентификатором");
             }
