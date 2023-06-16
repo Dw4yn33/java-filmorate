@@ -62,6 +62,9 @@ public class FilmService {
         topLikedFilms.addAll(filmStorage.getFilms());
         List<Film> listTop = new ArrayList<>(topLikedFilms);
         List<Film> finalTop = new ArrayList<>();
+        if (count > listTop.size()) {
+            count = listTop.size();
+        }
         for (int i = 0; i < count; i++) {
             finalTop.add(listTop.get(i));
         }
