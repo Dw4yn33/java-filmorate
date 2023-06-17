@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
@@ -18,7 +17,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Service
-@Component
 public class FilmService {
 
     private FilmStorage filmStorage;
@@ -28,6 +26,26 @@ public class FilmService {
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+    }
+
+    public List<Film> getFilms() {
+        return filmStorage.getFilms();
+    }
+
+    public Film create(Film film) {
+        return filmStorage.create(film);
+    }
+
+    public Film update(Film film) {
+        return filmStorage.update(film);
+    }
+
+    public Film getFilmById(Long id) {
+        return filmStorage.getFilmById(id);
+    }
+
+    public Film deleteFilmById(Long id) {
+        return filmStorage.deleteFilmById(id);
     }
 
     public void addLike(long filmId, long userId) {

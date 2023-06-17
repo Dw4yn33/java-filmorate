@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
 
@@ -16,45 +15,43 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
-    private UserStorage userStorage;
     private UserService userService;
 
     @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
-        this.userStorage = userStorage;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
     public List<User> getUsers() {
         log.info("Получен запрос GET к эндпоинту /users на получение списка всех пользователей");
-        return userStorage.getUsers();
+        return userService.getUsers();
     }
 
     @ResponseBody
     @PostMapping
     public User create(@Validated @RequestBody User user) {
         log.info("Получен запрос POST к эндпоинту /users на регистрацию пользователя в системе");
-        return userStorage.create(user);
+        return userService.create(user);
     }
 
     @ResponseBody
     @PutMapping
     public User update(@Validated @RequestBody User user) {
         log.info("Получен запрос PUT к эндпоинту /users на обновление информации о пользователе в системе");
-        return userStorage.update(user);
+        return userService.update(user);
     }
 
     @GetMapping("/{id}")
     public User getUserByIndex(@PathVariable Long id) {
         log.info("Получен запрос GET к эндпоинту /users/" + id + " на получение пользователя с идентификатором " + id);
-        return userStorage.getUserById(id);
+        return userService.getUserById(id);
     }
 
     @DeleteMapping("/{id}")
     public User deleteFilmByIndex(@PathVariable Long id) {
         log.info("Получен запрос DELETE к эндпоинту /users/" + id + " на удаление пользователя с идентификатором " + id);
-        return userStorage.deleteUserById(id);
+        return userService.deleteUserById(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
