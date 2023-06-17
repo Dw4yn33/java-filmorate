@@ -68,7 +68,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
-    private boolean checkForFilmValidation(Film film) {
+    public boolean checkForFilmValidation(Film film) {
         if (film.getName().isEmpty() || film.getName().isBlank()) {
             throw new ValidationException("Ошибка: введено пустое название фильма");
         } else if (film.getDescription().length() > DESCRIPTIONMAXLENGTH) {
