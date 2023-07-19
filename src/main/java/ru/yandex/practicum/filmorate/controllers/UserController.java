@@ -1,94 +1,86 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
 
-    private final Map<Integer,User> users = new HashMap<>();
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private static int generatorId = 1;
+    private UserService userService;
 
-
-    public static boolean checkForUserValidation(User user) {
-        if (user.getEmail().isEmpty()) {
-            String message = "Ошибка: введенная почта пуста";
-            log.info(message);
-            throw new ValidationException(message);
-        } else if (user.getEmail().contains(" ")) {
-            String message = "Ошибка: в введенной почте присутствуют пробелы";
-            log.info(message);
-            throw new ValidationException(message);
-        } else if (!user.getEmail().contains("@")) {
-            String message = "Ошибка: то, что вы ввели - не почта";
-            log.info(message);
-            throw new ValidationException(message);
-        } else if (user.getLogin().isEmpty()) {
-            String message = "Ошибка: пустой логин";
-            log.info(message);
-            throw new ValidationException(message);
-        } else if (user.getLogin().contains(" ")) {
-            String message = "Ошибка: в логине присутствуют пробелы";
-            log.info(message);
-            throw new ValidationException(message);
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
-            String message = "Ошибка: пользователь не может быть из будущего";
-            log.info(message);
-            throw new ValidationException(message);
-        }
-        if (user.getId() <= 0) {
-            user.setId(generatorId);
-            generatorId++;
-        }
-        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
-        return true;
-    }
-
-    @PostMapping
-    public User create(@Validated @RequestBody User user) throws ValidationException {
-        if (checkForUserValidation(user)) {
-            if (users.containsKey(user.getId())) {
-                String message = "Ошибка: попытка регистрации нового пользователя под чужим идентификатором";
-                log.info(message);
-                throw new ValidationException(message);
-            } else {
-                users.put(user.getId(),user);
-                log.info("Пользователь " + user.getName() + " (идентификатор: " + user.getId() +
-                        ") был успешно зарегистрирован");
-            }
-        }
-        return user;
-    }
-
-    @PutMapping
-    public User update(@Validated @RequestBody User user) throws ValidationException {
-        if (checkForUserValidation(user)) {
-           if (users.containsKey(user.getId())) {
-               users.put(user.getId(), user);
-               log.info("Информация о пользователе с идентификатором " + user.getId() + " была успешно обновлена");
-           } else throw new ValidationException("Пользователь с идентификатором" + user.getId() +
-                   "не зарегистрирован" + ", нечего обновлять");
-        }
-        return user;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
-    public Collection<User> getUsers() {
-        return users.values();
+    public List<User> getUsers() {
+        log.info("Получен запрос GET к эндпоинту /users на получение списка всех пользователей");
+        return userService.getUsers();
+    }
+
+    @ResponseBody
+    @PostMapping
+    public User create(@Validated @RequestBody User user) {
+        log.info("Получен запрос POST к эндпоинту /users на регистрацию пользователя в системе");
+        return userService.create(user);
+    }
+
+    @ResponseBody
+    @PutMapping
+    public User update(@Validated @RequestBody User user) {
+        log.info("Получен запрос PUT к эндпоинту /users на обновление информации о пользователе в системе");
+        return userService.update(user);
+    }
+
+    @GetMapping("/{id}")
+    public User getUserByIndex(@PathVariable Long id) {
+        log.info("Получен запрос GET к эндпоинту /users/" + id + " на получение пользователя с идентификатором " + id);
+        return userService.getUserById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public User deleteFilmByIndex(@PathVariable Long id) {
+        log.info("Получен запрос DELETE к эндпоинту /users/" + id + " на удаление пользователя с идентификатором " + id);
+        return userService.deleteUserById(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Получен запрос PUT к эндпоинту /users/" + id + "/friends/" + friendId + "." +
+                " Пользователи с идентификаторами " + id + " и " + friendId + " теперь друзья");
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Получен запрос DELETE к эндпоинту /users/" + id + "/friends/" + friendId +
+                ". Пользователи с идентификаторами " + id + " и " + friendId
+                + "больше не друзья");
+        userService.removeFriend(id, friendId);
+    }
+
+    @GetMapping("{id}/friends")
+    public List<User> getFriends(@PathVariable Long id) {
+        log.info("Получен запрос GET к эндпоинту /users/" + id + "/friends на получение списка друзей" +
+                " пользователя с идентификатором " + id);
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public List<User> getSharedFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        log.info("Получен запрос GET к эндпоинту /users/" + id + "/friends/common/" + otherId +
+                " на получение списка общих друзей" + " у пользователей с идентификаторами " + id + " и " + otherId);
+        return userService.getSharedFriends(id, otherId);
     }
 
 }
