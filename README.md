@@ -13,7 +13,7 @@
 ### Модель базы данных представлена на ER-диаграмме
 
 ---
-![Модель базы данных](DBModel-ER-Diagram.png)
+![DBModel-ER-Diagram](https://github.com/Dw4yn33/java-filmorate/assets/90154974/16c30a67-78a3-4cac-a209-817d810eadd3)
 
 ### Примеры запросов в базу данных
 
