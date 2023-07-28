@@ -17,6 +17,7 @@ class UserControllerTest {
 
     InMemoryUserStorage storage;
     Set<Long> friends;
+
     @BeforeEach
     public void createValidator() {
         storage = new InMemoryUserStorage();
