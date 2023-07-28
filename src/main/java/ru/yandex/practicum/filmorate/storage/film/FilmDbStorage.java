@@ -151,7 +151,7 @@ public class FilmDbStorage implements FilmStorage {
             throw new ValidationException("Ошибка: превышена максимально допустимая длина описания фильма");
         } else if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,25))) {
             throw new ValidationException("Ошибка: слишком старый фильм");
-        } else if (film.getReleaseDate() == null){
+        } else if (film.getReleaseDate() == null) {
             throw new ValidationException("Ошибка: фильм с неизвестной датой выпуска");
         } else if (film.getDuration() <= 0) {
             throw new ValidationException("Ошибка: продолжительность фильма не может быть отрицательной");

@@ -32,6 +32,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmoRateApplicationTests {
+
 	private final UserDbStorage userStorage;
 	private final FilmDbStorage filmStorage;
 	private final FilmService filmService;
