@@ -13,6 +13,7 @@ import java.util.List;
 
 @Component
 public class LikeStorage {
+
     private final JdbcTemplate jdbcTemplate;
     private MpaService mpaService;
     private GenreService genreService;

@@ -11,6 +11,7 @@ import java.util.List;
 
 @Component
 public class FriendStorage {
+
     private final JdbcTemplate jdbcTemplate;
     private UserStorage userStorage;
 

@@ -12,6 +12,7 @@ import java.util.List;
 
 @Component
 public class MpaStorage {
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired

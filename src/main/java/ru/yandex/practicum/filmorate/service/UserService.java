@@ -24,6 +24,7 @@ public class UserService {
         this.userStorage = userStorage;
         this.friendStorage = friendStorage;
     }
+
     public List<User> getUsers() {
         return userStorage.getUsers();
     }
