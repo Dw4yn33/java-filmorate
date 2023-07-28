@@ -11,7 +11,3 @@ INSERT INTO ratings_mpa (id, name, description) VALUES (2,'PG','Детям ре�
 INSERT INTO ratings_mpa (id, name, description) VALUES (3,'PG-13','Детям до 13 лет просмотр не желателен');
 INSERT INTO ratings_mpa (id, name, description) VALUES (4,'R','Лицам до 17 лет просматривать фильм можно только в присутствии взрослого');
 INSERT INTO ratings_mpa (id, name, description) VALUES (5,'NC-17','Лицам до 18 лет просмотр запрещён');
-
-SELECT * FROM ratings_mpa;
-SELECT * FROM genres;
-SELECT * FROM films;

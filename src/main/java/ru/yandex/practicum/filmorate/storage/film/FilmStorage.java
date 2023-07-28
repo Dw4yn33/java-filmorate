@@ -14,4 +14,6 @@ public interface FilmStorage {
     Film getFilmById(Long filmId);
 
     Film deleteFilmById(Long filmId);
+
+    boolean checkForFilmValidation(Film film);
 }

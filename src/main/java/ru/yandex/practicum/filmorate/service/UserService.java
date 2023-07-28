@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.ArrayList;
@@ -16,12 +17,13 @@ import java.util.Set;
 public class UserService {
 
     private UserStorage userStorage;
+    private FriendStorage friendStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FriendStorage friendStorage) {
         this.userStorage = userStorage;
+        this.friendStorage = friendStorage;
     }
-
     public List<User> getUsers() {
         return userStorage.getUsers();
     }
@@ -43,78 +45,38 @@ public class UserService {
     }
 
     public void addFriend(Long userId, Long friendId) {
-        if (userId == null || friendId == null) {
-            throw new ValidationException("Один из идентификаторов передан пустым");
+        if (userId == friendId) {
+            throw new ValidationException("Нельзя добавить самого себя в друзья!");
         }
-        if (userId.equals(friendId)) {
-            throw new ValidationException("Нельзя добавить в друзья самого себя");
-        }
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-        if (user == null) {
-            throw new UserNotFoundException("Несуществующий пользователь не может добавлять в друзья");
-        }
-        if (friend == null) {
-            throw new UserNotFoundException("Попытка добавить в друзья несуществующего пользователя");
-        }
-        user.addFriend(friendId);
-        friend.addFriend(userId);
+        friendStorage.addFriend(userId, friendId);
     }
 
     public void removeFriend(Long userId, Long friendId) {
-        if (userId == null || friendId == null) {
-            throw new ValidationException("Один из идентификаторов передан пустым");
+        if (userId == friendId) {
+            throw new ValidationException("Нельзя удалить самого себя из друзей!");
         }
-        if (userId.equals(friendId)) {
-            throw new ValidationException("Нельзя добавить в друзья самого себя");
-        }
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-        if (user == null) {
-            throw new UserNotFoundException("Несуществующий пользователь не может добавлять в друзья");
-        }
-        if (friend == null) {
-            throw new UserNotFoundException("Попытка добавить в друзья несуществующего пользователя");
-        }
-        user.removeFriend(friendId);
-        friend.removeFriend(userId);
+        friendStorage.deleteFriend(userId, friendId);
     }
 
     public List<User> getFriends(Long userId) {
-        if (userId == null) {
-            throw new ValidationException("Один из идентификаторов передан пустым");
-        }
-        User user = userStorage.getUserById(userId);
-        if (user == null) {
-            throw new UserNotFoundException("Несуществующий пользователь не может добавлять в друзья");
-        }
         List<User> friends = new ArrayList<>();
-        for (long i : user.getFriends()) {
-            friends.add(userStorage.getUserById(i));
+        if (userId != null) {
+            friends = friendStorage.getFriends(userId);
         }
         return friends;
     }
 
-    public List<User> getSharedFriends(Long userId, Long friendId) {
-        if (userId == null || friendId == null) {
-            throw new ValidationException("Один из идентификаторов передан пустым");
+    public List<User> getSharedFriends(Long firstUserId, Long secondUserId) {
+
+        User firstUser = userStorage.getUserById(firstUserId);
+        User secondUser = userStorage.getUserById(secondUserId);
+        Set<User> intersection = null;
+
+        if ((firstUser != null) && (secondUser != null)) {
+            intersection = new HashSet<>(friendStorage.getFriends(firstUserId));
+            intersection.retainAll(friendStorage.getFriends(secondUserId));
         }
-        if (userId.equals(friendId)) {
-            throw new ValidationException("Нельзя добавить в друзья самого себя");
-        }
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-        if (user == null || friend == null) {
-            throw new UserNotFoundException("Невозможно посмотреть список друзей несуществующего пользователя");
-        }
-        Set<Long> sameFriends = new HashSet<>(user.getFriends());
-        sameFriends.retainAll(friend.getFriends());
-        List<Long> finalFriends = new ArrayList<>(sameFriends);
-        List<User> friends = new ArrayList<>();
-        for (long i : finalFriends) {
-            friends.add(userStorage.getUserById(i));
-        }
-        return friends;
+        return new ArrayList<User>(intersection);
     }
 
 }

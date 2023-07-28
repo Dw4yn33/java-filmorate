@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/users")
 @Slf4j
@@ -49,7 +48,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public User deleteFilmByIndex(@PathVariable Long id) {
+    public User deleteUserByIndex(@PathVariable Long id) {
         log.info("Получен запрос DELETE к эндпоинту /users/" + id + " на удаление пользователя с идентификатором " + id);
         return userService.deleteUserById(id);
     }
