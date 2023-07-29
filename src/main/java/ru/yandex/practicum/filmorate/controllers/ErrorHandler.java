@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
+
 @RestControllerAdvice
 public class ErrorHandler {
 
@@ -43,6 +44,11 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
+        //костыли в коде они такие
+        if (e.getMessage().contains("org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException")) {
+            return new ErrorResponse("Ошибка выполнения внутреннего sql-запроса",
+                    "Unique index or primary key violation");
+        }
         return new ErrorResponse("Произошла непредвиденная ошибка", e.getMessage());
     }
 }

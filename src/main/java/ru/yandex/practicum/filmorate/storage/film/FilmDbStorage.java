@@ -23,9 +23,9 @@ public class FilmDbStorage implements FilmStorage {
 
     private static final int DESCRIPTIONMAXLENGTH = 200;
     private final JdbcTemplate jdbcTemplate;
-    private MpaService mpaService;
-    private GenreService genreService;
-    private LikeStorage likeStorage;
+    private final MpaService mpaService;
+    private final GenreService genreService;
+    private final LikeStorage likeStorage;
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate, MpaService mpaService, GenreService genreService,
@@ -55,6 +55,9 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film create(Film film) {
         checkForFilmValidation(film);
+        if (isThatFilmDuplicatedPost(film)) {
+            throw new ValidationException("Ошибка: попытка сохранения дубликата фильма");
+        }
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("films")
                 .usingGeneratedKeyColumns("id");
@@ -72,30 +75,32 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
         checkForFilmValidation(film);
-        if (film == null) {
-            throw new ValidationException("Передан пустой аргумент!");
-        }
-        String sqlQuery = "UPDATE films SET " +
-                "name = ?, description = ?, release_date = ?, duration = ?, " +
-                "rating_id = ? WHERE id = ?";
-        if (jdbcTemplate.update(sqlQuery,
-                film.getName(),
-                film.getDescription(),
-                film.getReleaseDate(),
-                film.getDuration(),
-                film.getMpa().getId(),
-                film.getId()) != 0) {
-            film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
-            if (film.getGenres() != null) {
-                Collection<Genre> sortGenres = film.getGenres().stream()
-                        .sorted(Comparator.comparing(Genre::getId))
-                        .collect(Collectors.toList());
-                film.setGenres(new LinkedHashSet<>(sortGenres));
-                for (Genre genre : film.getGenres()) {
-                    genre.setName(genreService.getGenreById(genre.getId()).getName());
-                }
+        if (getFilmById(film.getId()) != null) {
+            if (isThatFilmDuplicatedPut(film)) {
+                throw new ValidationException("Ошибка: попытка сохранения дубликата фильма");
             }
-            genreService.putGenres(film);
+            String sqlQuery = "UPDATE films SET " +
+                    "name = ?, description = ?, release_date = ?, duration = ?, " +
+                    "rating_id = ? WHERE id = ?";
+            if (jdbcTemplate.update(sqlQuery,
+                    film.getName(),
+                    film.getDescription(),
+                    film.getReleaseDate(),
+                    film.getDuration(),
+                    film.getMpa().getId(),
+                    film.getId()) != 0) {
+                film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
+                if (film.getGenres() != null) {
+                    Collection<Genre> sortGenres = film.getGenres().stream()
+                            .sorted(Comparator.comparing(Genre::getId))
+                            .collect(Collectors.toList());
+                    film.setGenres(new LinkedHashSet<>(sortGenres));
+                    for (Genre genre : film.getGenres()) {
+                        genre.setName(genreService.getGenreById(genre.getId()).getName());
+                    }
+                }
+                genreService.putGenres(film);
+            }
             return film;
         } else {
             throw new FilmNotFoundException("Фильм с ID=" + film.getId() + " не найден!");
@@ -145,19 +150,57 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public boolean checkForFilmValidation(Film film) {
-        if (film.getName().isEmpty() || film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isEmpty() || film.getName().isBlank()) {
             throw new ValidationException("Ошибка: введено пустое название фильма");
         } else if (film.getDescription().length() > DESCRIPTIONMAXLENGTH || film.getDescription().length() < 1) {
             throw new ValidationException("Ошибка: превышена максимально допустимая длина описания фильма");
-        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,25))) {
-            throw new ValidationException("Ошибка: слишком старый фильм");
         } else if (film.getReleaseDate() == null) {
             throw new ValidationException("Ошибка: фильм с неизвестной датой выпуска");
+        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,25))) {
+            throw new ValidationException("Ошибка: слишком старый фильм");
+        } else if (film.getDuration() == null) {
+            throw new ValidationException("Ошибка: у фильма отсутствует продолжительность");
         } else if (film.getDuration() <= 0) {
             throw new ValidationException("Ошибка: продолжительность фильма не может быть отрицательной");
         } else if (film.getMpa() == null) {
             throw new ValidationException("Ошибка: у фильма отсутствует рейтинг");
+        } else if (film.getGenres() != null) {
+            if (!film.getGenres().isEmpty()) {
+                for (Genre genre : film.getGenres()) {
+                    if (genre.getId() == null) {
+                        throw new ValidationException("Ошибка: у жанров фильма отсутствует идентификатор");
+                    }
+                }
+            }
         }
         return true;
+    }
+
+    public boolean isThatFilmDuplicatedPost(Film film) {
+        if (getFilms() != null) {
+            for (Film check : getFilms()) {
+                if (film.getId() != null && check.getId() != null) {
+                    if (film.getId().equals(check.getId())) continue;
+                }
+                if (film.getName().equals(check.getName()) && film.getDescription().equals(check.getDescription())
+                        && film.getDuration().equals(check.getDuration()) && film.getReleaseDate().equals(check.getReleaseDate())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isThatFilmDuplicatedPut(Film film) {
+        if (getFilms() != null) {
+            for (Film check : getFilms()) {
+                if (film.getId().equals(check.getId())) continue;
+                if (film.getName().equals(check.getName()) && film.getDescription().equals(check.getDescription())
+                        && film.getDuration().equals(check.getDuration()) && film.getReleaseDate().equals(check.getReleaseDate())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

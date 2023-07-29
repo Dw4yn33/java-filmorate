@@ -16,8 +16,8 @@ import java.util.Set;
 @Service
 public class UserService {
 
-    private UserStorage userStorage;
-    private FriendStorage friendStorage;
+    private final UserStorage userStorage;
+    private final FriendStorage friendStorage;
 
     @Autowired
     public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FriendStorage friendStorage) {
@@ -26,7 +26,14 @@ public class UserService {
     }
 
     public List<User> getUsers() {
-        return userStorage.getUsers();
+        List<User> users = userStorage.getUsers();
+        List<User> newUsers = new ArrayList<>();
+        if (users != null) {
+            for (User user : users) {
+                newUsers.add(getUserById(user.getId()));
+            }
+        }
+        return newUsers;
     }
 
     public User create(User user) {
@@ -38,7 +45,14 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userStorage.getUserById(id);
+        User user = userStorage.getUserById(id);
+        List<User> friends = friendStorage.getFriends(id);
+        if (friends != null) {
+            for (User friend : friends) {
+                user.addFriend(friend.getId());
+            }
+        }
+        return user;
     }
 
     public User deleteUserById(Long id) {
@@ -49,12 +63,24 @@ public class UserService {
         if (userId == friendId) {
             throw new ValidationException("Нельзя добавить самого себя в друзья!");
         }
-        friendStorage.addFriend(userId, friendId);
+        if (getUserById(userId).getFriends().contains(friendId)) {
+            throw new ValidationException("Ошибка: нельзя отправлять несколько запросов в друзья");
+        }
+        if (getUserById(friendId).getFriends().contains(userId)) {
+            friendStorage.addFriend(userId, friendId);
+            friendStorage.makeFriendshipTrue(userId, friendId);
+        } else friendStorage.addFriend(userId, friendId);
     }
 
     public void removeFriend(Long userId, Long friendId) {
         if (userId == friendId) {
             throw new ValidationException("Нельзя удалить самого себя из друзей!");
+        }
+        if (getUserById(friendId).getFriends().contains(userId)
+                && getUserById(userId).getFriends().contains(friendId)) {
+            friendStorage.deleteFriend(userId, friendId);
+            friendStorage.deleteFriend(friendId, userId);
+            friendStorage.makeFriendshipFalse(userId,friendId);
         }
         friendStorage.deleteFriend(userId, friendId);
     }

@@ -15,8 +15,8 @@ import java.util.List;
 public class LikeStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private MpaService mpaService;
-    private GenreService genreService;
+    private final MpaService mpaService;
+    private final GenreService genreService;
 
     @Autowired
     public LikeStorage(JdbcTemplate jdbcTemplate, MpaService mpaService, GenreService genreService) {

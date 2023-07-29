@@ -59,5 +59,3 @@ CREATE TABLE IF NOT EXISTS friends
     friend_id bigint REFERENCES users (id) ON DELETE CASCADE,
     status boolean
 );
-
-

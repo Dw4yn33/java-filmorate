@@ -16,9 +16,9 @@ import java.util.List;
 @Service
 public class FilmService {
 
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
-    private LikeStorage likeStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+    private final LikeStorage likeStorage;
 
     @Autowired
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,

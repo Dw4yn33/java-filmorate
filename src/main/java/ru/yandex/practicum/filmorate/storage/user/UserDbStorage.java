@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -40,10 +41,14 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User create(User user) {
         checkForUserValidation(user);
+        if (isThatUserDuplicatedPost(user)) {
+            throw new ValidationException("Ошибка: попытка сохранения дубликата пользователя");
+        }
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("id");
         user.setId(simpleJdbcInsert.executeAndReturnKey(user.toMap()).longValue());
+
         log.info("Добавлен новый пользователь с ID={}", user.getId());
         return user;
     }
@@ -52,6 +57,9 @@ public class UserDbStorage implements UserStorage {
     public User update(User user) {
         checkForUserValidation(user);
         if (getUserById(user.getId()) != null) {
+            if (isThatUserDuplicatedPut(user)) {
+                throw new ValidationException("Ошибка: попытка сохранения дубликата пользователя");
+            }
             String sqlQuery = "UPDATE users SET " +
                     "email = ?, login = ?, name = ?, birthday = ? " +
                     "WHERE id = ?";
@@ -102,24 +110,48 @@ public class UserDbStorage implements UserStorage {
         return user;
     }
 
+
+
     @Override
     public boolean checkForUserValidation(User user) {
-        if (user.getEmail().isEmpty()) {
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
             throw new ValidationException("Ошибка: введенная почта пуста");
         } else if (user.getEmail().contains(" ")) {
             throw new ValidationException("Ошибка: в введенной почте присутствуют пробелы");
         } else if (!user.getEmail().contains("@")) {
             throw new ValidationException("Ошибка: то, что вы ввели - не почта");
-        } else if (user.getLogin().isEmpty()) {
+        } else if (user.getLogin() == null || user.getLogin().isEmpty()) {
             throw new ValidationException("Ошибка: пустой логин");
         } else if (user.getLogin().contains(" ")) {
             throw new ValidationException("Ошибка: в логине присутствуют пробелы");
         } else if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Ошибка: пользователь не может быть из будущего");
         }
-        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
         return true;
+    }
+
+    public boolean isThatUserDuplicatedPost(User user) {
+        if (getUsers() != null) {
+            for (User check : getUsers()) {
+                if (user.getLogin().equals(check.getLogin()) && user.getEmail().equals(check.getEmail())
+                        && user.getName().equals(check.getName()) && user.getBirthday().equals(check.getBirthday())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isThatUserDuplicatedPut(User user) {
+        if (getUsers() != null) {
+            for (User check : getUsers()) {
+                if (user.getId() == check.getId()) continue;
+                if (user.getLogin().equals(check.getLogin()) && user.getEmail().equals(check.getEmail())
+                        && user.getName().equals(check.getName()) && user.getBirthday().equals(check.getBirthday())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

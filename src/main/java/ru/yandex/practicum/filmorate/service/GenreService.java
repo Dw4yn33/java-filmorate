@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Service
 public class GenreService {
 
-    private GenreStorage genreStorage;
+    private final GenreStorage genreStorage;
 
     @Autowired
     public GenreService(GenreStorage genreStorage) {
