@@ -1,12 +1,13 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
-
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -42,13 +43,15 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleDuplicateException(final DuplicateKeyException e) {
+        return new ErrorResponse("Ошибка добавления нескольких лайков одним пользователем"
+                ,"Нарушение уникального индекса или первичного ключа");
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
-        //костыли в коде они такие
-        if (e.getMessage().contains("org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException")) {
-            return new ErrorResponse("Ошибка выполнения внутреннего sql-запроса",
-                    "Unique index or primary key violation");
-        }
         return new ErrorResponse("Произошла непредвиденная ошибка", e.getMessage());
     }
 }
