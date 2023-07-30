@@ -44,8 +44,8 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDuplicateException(final DuplicateKeyException e) {
-        return new ErrorResponse("Ошибка добавления нескольких лайков одним пользователем"
-                ,"Нарушение уникального индекса или первичного ключа");
+        return new ErrorResponse("Ошибка добавления нескольких лайков одним пользователем",
+                "Нарушение уникального индекса или первичного ключа");
     }
 
     @ExceptionHandler
