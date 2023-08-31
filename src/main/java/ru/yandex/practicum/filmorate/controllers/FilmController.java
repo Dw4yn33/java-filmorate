@@ -2,11 +2,11 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -15,7 +15,7 @@ import java.util.List;
 public class FilmController {
 
 
-    private FilmService filmService;
+    private final FilmService filmService;
 
     @Autowired
     public FilmController(FilmService filmService) {
@@ -30,14 +30,14 @@ public class FilmController {
 
     @ResponseBody
     @PostMapping
-    public Film create(@Validated @RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         log.info("Получен запрос POST к эндпоинту /films на регистрацию фильма в системе");
         return filmService.create(film);
     }
 
     @ResponseBody
     @PutMapping
-    public Film update(@Validated @RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         log.info("Получен запрос PUT к эндпоинту /films на обновление информации о фильме в системе");
         return filmService.update(film);
     }

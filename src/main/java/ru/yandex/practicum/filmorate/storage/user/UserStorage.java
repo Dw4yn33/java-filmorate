@@ -13,4 +13,6 @@ public interface UserStorage {
     User getUserById(Long userId);
 
     User deleteUserById(Long userId);
+
+    boolean checkForUserValidation(User user);
 }
